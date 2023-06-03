@@ -12,6 +12,7 @@ class _HomePageState extends State<HomePage> {
 // tracking current position of index
 
   int currentQesIndex = 0;
+  int score = 0;
   List<QuestionModel> mathQuestions = [
     QuestionModel(
       question: 'What is the value of 2 + 2?',
@@ -70,9 +71,6 @@ class _HomePageState extends State<HomePage> {
   void checkAnswer(String selectedAnswer) {
     // storing currect answer int the correctAns variable
     String correctAns = mathQuestions[currentQesIndex].ans;
-
-    int score = 0;
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -82,54 +80,67 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  if (currentQesIndex < mathQuestions.length - 1) {
-                    if (selectedAnswer == correctAns) {
-                      score++;
-                    }
-                    currentQesIndex++;
-                  } else {
-                    //  going to end quiz and show next show alert
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("Quiz End"),
-                          content: Text(
-                            'Congratulations! I have complete quize sucessfully Your score is $score',
-                          ),
-                          actions: [
-                            Row(
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    currentQesIndex = 0;
-                                  },
-                                  child: const Text('Try again'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
+                setState(
+                  () {
+                    if (currentQesIndex < mathQuestions.length - 1) {
+                      if (selectedAnswer == correctAns) {
+                        score++;
+                        print(score);
+                      }
+                      currentQesIndex++;
+
+                      Navigator.of(context).pop();
+                    } else {
+                      //  going to end quiz and show next show alert
+
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Quiz End"),
+                            content: Text(
+                              'Congratulations! I have complete quize sucessfully Your score is $score',
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                });
-                Navigator.of(context).pop();
+                            actions: [
+                              Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      currentQesIndex = 0;
+                                    },
+                                    child: const Text('Try again'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                );
               },
-              child: const Text('Next'),
+              /*   child: Text(
+                currentQesIndex == mathQuestions.length
+                    ? 'See Results'
+                    : 'Next Question',
+              ), */
+
+              child: Text(currentQesIndex.toString()),
             ),
           ],
         );
       },
     );
   }
+
+  void printAnswer() {}
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +179,23 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class NextPage extends StatelessWidget {
+  int score;
+  NextPage({super.key, required this.score});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          const Text('Congratulations!'),
+          Text('Your Score is $score'),
+        ],
       ),
     );
   }
