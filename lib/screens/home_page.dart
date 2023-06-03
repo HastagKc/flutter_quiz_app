@@ -24,178 +24,136 @@ class _HomePageState extends State<HomePage> {
       ansOpt: ['9', '7', '10', '12'],
       ans: '9',
     ),
-    // QuestionModel(
-    //   question: 'What is the square root of 16?',
-    //   ansOpt: ['4', '6', '8', '10'],
-    //   ans: '4',
-    // ),
-    // QuestionModel(
-    //   question: 'What is the result of 5 squared?',
-    //   ansOpt: ['20', '25', '30', '35'],
-    //   ans: '25',
-    // ),
-    // QuestionModel(
-    //   question: 'Simplify: 2 * (4 + 3)',
-    //   ansOpt: ['7', '14', '16', '21'],
-    //   ans: '14',
-    // ),
-    // QuestionModel(
-    //   question: 'What is the value of 9 divided by 3?',
-    //   ansOpt: ['2', '3', '4', '5'],
-    //   ans: '3',
-    // ),
-    // QuestionModel(
-    //   question: 'Find the next number in the sequence: 2, 4, 6, 8, ...',
-    //   ansOpt: ['10', '9', '12', '14'],
-    //   ans: '10',
-    // ),
-    // QuestionModel(
-    //   question: 'What is the result of 3 to the power of 4?',
-    //   ansOpt: ['12', '27', '64', '81'],
-    //   ans: '81',
-    // ),
-    // QuestionModel(
-    //   question: 'Simplify: 12 / (4 + 2)',
-    //   ansOpt: ['1', '2', '3', '4'],
-    //   ans: '2',
-    // ),
-    // QuestionModel(
-    //   question: 'What is the value of 5 - 2 * 3?',
-    //   ansOpt: ['-1', '1', '3', '5'],
-    //   ans: '-1',
-    // ),
+    QuestionModel(
+      question: 'What is the square root of 16?',
+      ansOpt: ['4', '6', '8', '10'],
+      ans: '4',
+    ),
+    QuestionModel(
+      question: 'What is the result of 5 squared?',
+      ansOpt: ['20', '25', '30', '35'],
+      ans: '25',
+    ),
   ];
+
+  var totalScore = 0;
+  var currentQuestionIndex = 0;
 
 // creating function to check answer
 
   void checkAnswer(String selectedAnswer) {
     // storing currect answer int the correctAns variable
-    String correctAns = mathQuestions[currentQesIndex].ans;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Answer'),
-          content: Text(selectedAnswer == correctAns ? 'Correct!' : 'Wrong!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setState(
-                  () {
-                    if (currentQesIndex < mathQuestions.length - 1) {
-                      if (selectedAnswer == correctAns) {
-                        score++;
-                        print(score);
-                      }
-                      currentQesIndex++;
+    if (currentQesIndex < mathQuestions.length) {
+      if (selectedAnswer == mathQuestions[currentQesIndex].ans) {
+        totalScore++;
+        setState(() {
+          currentQesIndex++;
 
-                      Navigator.of(context).pop();
-                    } else {
-                      //  going to end quiz and show next show alert
-
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Quiz End"),
-                            content: Text(
-                              'Congratulations! I have complete quize sucessfully Your score is $score',
-                            ),
-                            actions: [
-                              Row(
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      currentQesIndex = 0;
-                                    },
-                                    child: const Text('Try again'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                );
-              },
-              /*   child: Text(
-                currentQesIndex == mathQuestions.length
-                    ? 'See Results'
-                    : 'Next Question',
-              ), */
-
-              child: Text(currentQesIndex.toString()),
-            ),
-          ],
-        );
-      },
-    );
+          print('set call and score ${totalScore}');
+        });
+      } else {
+        setState(() {
+          currentQesIndex++;
+        });
+      }
+    } else {
+      print('Nothing');
+    }
   }
 
-  void printAnswer() {}
+// reset function
+
+  dynamic resetQuiz() {
+    setState(() {
+      totalScore = 0;
+      currentQesIndex = 0;
+    });
+
+    return currentQesIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
-    QuestionModel currentQuestion = mathQuestions[currentQesIndex];
     // list for current answer
 
-    List<String> answerOption = mathQuestions[currentQesIndex].ansOpt;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('QuestionModel No: 1'),
+        title: Text('QuestionModel No: ${currentQesIndex + 1}'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              currentQuestion.question,
-              style: const TextStyle(
-                fontSize: 22.0,
-                fontWeight: FontWeight.w500,
+      body: (currentQesIndex <= mathQuestions.length - 1)
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    mathQuestions[currentQesIndex].question,
+                    style: const TextStyle(
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Column(
+                    children:
+                        mathQuestions[currentQesIndex].ansOpt.map((answer) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          print(answer);
+                          checkAnswer(answer);
+                        },
+                        child: Text(answer),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            )
+          : Center(
+              child: ScorePage(
+                score: totalScore,
+                resetQuiz: resetQuiz(),
               ),
             ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            Column(
-              children: answerOption.map((answer) {
-                return ElevatedButton(
-                  onPressed: () {
-                    checkAnswer(answer);
-                  },
-                  child: Text(answer),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
 
-class NextPage extends StatelessWidget {
-  int score;
-  NextPage({super.key, required this.score});
+class ScorePage extends StatelessWidget {
+  var score;
+  Function resetQuiz;
+  ScorePage({
+    Key? key,
+    required this.score,
+    required this.resetQuiz,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const Text('Congratulations!'),
-          Text('Your Score is $score'),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Your Score is ${score}'),
+            const SizedBox(
+              height: 20.0,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                resetQuiz();
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) {
+                    return HomePage();
+                  }),
+                );
+              },
+              child: const Text("Try Again "),
+            ),
+          ],
+        ),
       ),
     );
   }
