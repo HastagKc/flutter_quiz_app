@@ -12,7 +12,7 @@ class _HomePageState extends State<HomePage> {
 // tracking current position of index
 
   int currentQesIndex = 0;
-  int score = 0;
+  var totalScore = 0;
   List<QuestionModel> mathQuestions = [
     QuestionModel(
       question: 'What is the value of 2 + 2?',
@@ -35,9 +35,6 @@ class _HomePageState extends State<HomePage> {
       ans: '25',
     ),
   ];
-
-  var totalScore = 0;
-  var currentQuestionIndex = 0;
 
 // creating function to check answer
 
